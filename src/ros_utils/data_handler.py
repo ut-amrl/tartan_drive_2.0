@@ -2,12 +2,9 @@ import cv2
 import numpy as np
 from scipy.spatial.transform import Rotation as R
 
-import sensor_msgs.msg
-import geometry_msgs.msg
-import nav_msgs.msg
 
-
-def read_image_msg(msg: sensor_msgs.msg.Image) -> np.ndarray:
+def read_image_msg(msg) -> np.ndarray:
+    """sensor_msgs/Image to numpy array."""
     np_arr = np.frombuffer(msg.data, np.uint8)
     if hasattr(msg, "format") and "compressed" in msg.format:
         image = cv2.imdecode(np_arr, cv2.IMREAD_COLOR)
@@ -16,7 +13,8 @@ def read_image_msg(msg: sensor_msgs.msg.Image) -> np.ndarray:
     return image
 
 
-def read_depth_msg(msg: sensor_msgs.msg.Image) -> np.ndarray:
+def read_depth_msg(msg) -> np.ndarray:
+    """sensor_msgs/Image to numpy array."""
     # https://docs.carnegierobotics.com/S27/api.html#api:camera:depth
     np_arr = np.frombuffer(msg.data, np.float32)
     if hasattr(msg, "format") and "compressed" in msg.format:
@@ -26,7 +24,8 @@ def read_depth_msg(msg: sensor_msgs.msg.Image) -> np.ndarray:
     return depth
 
 
-def read_gps_msg(msg: sensor_msgs.msg.NavSatFix) -> np.ndarray:
+def read_gps_msg(msg) -> np.ndarray:
+    """sensor_msgs/NavSatFix to numpy array."""
     return {
         "status": msg.status.status,
         "service": msg.status.service,
@@ -38,7 +37,8 @@ def read_gps_msg(msg: sensor_msgs.msg.NavSatFix) -> np.ndarray:
     }
 
 
-def read_odometry_msg(msg: nav_msgs.msg.Odometry) -> dict:
+def read_odometry_msg(msg) -> dict:
+    """nav_msgs/Odometry to numpy array."""
     return {
         "x": msg.pose.pose.position.x,
         "y": msg.pose.pose.position.y,
@@ -56,7 +56,8 @@ def read_odometry_msg(msg: nav_msgs.msg.Odometry) -> dict:
     }
 
 
-def read_twist_msg(msg: geometry_msgs.msg.Twist) -> dict:
+def read_twist_msg(msg) -> dict:
+    """geometry_msgs/Twist to numpy array."""
     return {
         "vx": msg.linear.x,
         "vy": msg.linear.y,
@@ -67,7 +68,8 @@ def read_twist_msg(msg: geometry_msgs.msg.Twist) -> dict:
     }
 
 
-def read_twist_stamped_msg(msg: geometry_msgs.msg.TwistStamped) -> dict:
+def read_twist_stamped_msg(msg) -> dict:
+    """geometry_msgs/TwistStamped to numpy array."""
     return {
         "vx": msg.twist.linear.x,
         "vy": msg.twist.linear.y,
@@ -78,7 +80,7 @@ def read_twist_stamped_msg(msg: geometry_msgs.msg.TwistStamped) -> dict:
     }
 
 
-def transform_to_matrix(transform_msg: geometry_msgs.msg.Transform) -> np.ndarray:
+def transform_to_matrix(transform_msg) -> np.ndarray:
     """Convert geometry_msgs/Transform into a 4x4 transformation matrix."""
     tx, ty, tz = (
         transform_msg.translation.x,
