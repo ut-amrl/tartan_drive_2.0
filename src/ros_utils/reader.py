@@ -1,4 +1,6 @@
 import pathlib
+from collections import Counter
+
 from tqdm import tqdm
 from loguru import logger
 
@@ -22,7 +24,7 @@ def read_bagfile(
     ## Read the bagfile
     bagfile = pathlib.Path(bagfile)
     bagfile_size = bagfile.stat().st_size / (1024**3)
-    logger.info(f"Opening bagfile {bagfile} ({bagfile_size:.2f} GB) ...")
+    logger.info(f"Opening bagfile -- {bagfile} ({bagfile_size:.2f} GB)")
 
     with AnyReader([bagfile]) as reader:
         connections = [c for c in reader.connections if c.topic in topics]
@@ -52,5 +54,16 @@ def read_bagfile(
     ## Sort the messages by timestamp for each topic
     for msgs in topics_to_msgs.values():
         msgs.sort(key=lambda x: x[0])
+
+    ## Check for duplicate timestamps
+    for topic, msgs in topics_to_msgs.items():
+        timestamps = [ts for ts, _ in msgs]
+        dup_counts = Counter(timestamps)
+        dupes = [ts for ts, count in dup_counts.items() if count > 1]
+        if dupes:
+            logger.warning(
+                f"Topic [{topic}] has {len(dupes)} duplicate timestamps "
+                f"(e.g. {duples[:5]})"
+            )
 
     return topics_to_msgs
