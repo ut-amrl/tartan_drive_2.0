@@ -9,14 +9,7 @@ import numpy as np
 from tqdm import tqdm
 from loguru import logger
 
-from ros_utils import (
-    read_bagfile,
-    read_image_msg,
-    read_gps_msg,
-    read_odometry_msg,
-    read_twist_msg,
-    read_twist_stamped_msg,
-)
+from ros_utils import *
 
 
 def process_image_msgs(msgs, outdir, ts_file, prefix):
@@ -64,7 +57,10 @@ def process_csv_msgs(msgs, outfile):
             data = read_twist_msg(msg)
         elif msg_type == "geometry_msgs__msg__TwistStamped":
             data = read_twist_stamped_msg(msg)
+        elif msg_type == "racepak__msg__rp_shock_sensors":
+            data = read_racepack_shock_msg(msg)
         else:
+            print(msg)
             raise NotImplementedError(f"Unsupported message type {msg_type}")
 
         if header is None:

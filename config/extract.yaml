@@ -26,6 +26,9 @@ topics:
     format: image
     outdir: multisense
     sub: right
+  /wheel_rpm:
+    format: csv
+    name: wheel_rpm
 
 scenes:
   2023-10-26-14-42-35_turnpike_afternoon_fall:

@@ -80,23 +80,11 @@ def read_twist_stamped_msg(msg) -> dict:
     }
 
 
-def transform_to_matrix(transform_msg) -> np.ndarray:
-    """Convert geometry_msgs/Transform into a 4x4 transformation matrix."""
-    tx, ty, tz = (
-        transform_msg.translation.x,
-        transform_msg.translation.y,
-        transform_msg.translation.z,
-    )
-    qx, qy, qz, qw = (
-        transform_msg.rotation.x,
-        transform_msg.rotation.y,
-        transform_msg.rotation.z,
-        transform_msg.rotation.w,
-    )
-    rotation_matrix = R.from_quat([qx, qy, qz, qw]).as_matrix()
-
-    transformation_matrix = np.eye(4)
-    transformation_matrix[:3, :3] = rotation_matrix
-    transformation_matrix[:3, 3] = [tx, ty, tz]
-
-    return transformation_matrix
+def read_racepack_shock_msg(msg) -> dict:
+    """racepak/rp_shock_sensors to numpy array."""
+    return {
+        "front_left": msg.front_left,
+        "front_right": msg.front_right,
+        "rear_left": msg.rear_left,
+        "rear_right": msg.rear_right,
+    }
